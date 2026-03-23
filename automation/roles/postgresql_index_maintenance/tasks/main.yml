@@ -15,7 +15,7 @@
   tags: pg_auto_reindexer, pg_auto_reindexer_install
 
 # For PostgreSQL 11 and below, pg_repack is used for index maintenance
-- name: Install pg_repack package 
+- name: Install pg_repack package
   ansible.builtin.package:
     name: "{{ pg_repack_package }}"
     state: present
