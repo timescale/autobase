@@ -486,7 +486,7 @@ postgresql_index_maintenance_cron_jobs:
     day: "*"
     month: "*"
     weekday: "1-5"
-    job: "/usr/local/bin/pg_auto_reindexer --index-bloat={{ postgresql_index_maintenance_bloat_threshold }} --index-maxsize={{ postgresql_index_maintenance_size_threshold }} --maintenance-start={{ postgresql_index_maintenance_start }} --maintenance-stop={{ postgresql_index_maintenance_stop }} --jobs={{ postgresql_index_maintenance_jobs }}" # yamllint disable rule:line-length
+    job: "/usr/local/bin/pg_auto_reindexer --jobs={{ postgresql_index_maintenance_jobs }} --index-bloat={{ postgresql_index_maintenance_bloat_threshold }} --index-maxsize={{ postgresql_index_maintenance_size_threshold }} --maintenance-start={{ postgresql_index_maintenance_start }} --maintenance-stop={{ postgresql_index_maintenance_stop }}" # yamllint disable rule:line-length
   - name: "pg_auto_reindexer: weekends"
     user: "root"
     file: "/etc/cron.d/pg_auto_reindexer"
@@ -495,7 +495,7 @@ postgresql_index_maintenance_cron_jobs:
     day: "*"
     month: "*"
     weekday: "6,0"
-    job: "/usr/local/bin/pg_auto_reindexer --index-bloat={{ postgresql_index_maintenance_bloat_threshold }} --index-minsize={{ postgresql_index_maintenance_size_threshold }} --maintenance-start={{ postgresql_index_maintenance_start }} --maintenance-stop={{ postgresql_index_maintenance_stop }} --jobs={{ postgresql_index_maintenance_jobs }}" # yamllint disable rule:line-length
+    job: "/usr/local/bin/pg_auto_reindexer --jobs={{ postgresql_index_maintenance_jobs }} --index-bloat={{ postgresql_index_maintenance_bloat_threshold }} --index-minsize={{ postgresql_index_maintenance_size_threshold }} --maintenance-start={{ postgresql_index_maintenance_start }} --maintenance-stop={{ postgresql_index_maintenance_stop }}" # yamllint disable rule:line-length
 
 ############################################################
 # PgBouncer parameters
