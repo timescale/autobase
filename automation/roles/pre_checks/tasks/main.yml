@@ -88,5 +88,6 @@
       Invalid index maintenance window format.
       Variables 'postgresql_index_maintenance_start' and 'postgresql_index_maintenance_stop'
       must be in HHMM format (e.g. 0000, 0130, 2359).
-    success_msg: Index maintenance window format is valid.
-  when: postgresql_index_maintenance | default(false) | bool
+  when:
+    - postgresql_index_maintenance | default(false) | bool
+    - inventory_hostname == groups['postgres_cluster'][0] # run once
