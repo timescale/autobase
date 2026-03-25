@@ -915,8 +915,8 @@
       ansible.builtin.command: "{{ postgresql_bin_dir }}/pg_isready -p {{ postgresql_port }}"
       register: pg_isready_result
       until: pg_isready_result.rc == 0
-      retries: 1000
-      delay: 30
+      retries: "{{ pg_isready_retries | default(1000) }}"
+      delay: "{{ pg_isready_delay | default(30) }}"
       changed_when: false
 
     - name: Wait for the cluster to initialize (master is the leader with the lock)
