@@ -1,4 +1,16 @@
 ---
+# Prevent Patroni from starting prematurely during setup.
+# On re-deploy, flush_handlers or package triggers can start Patroni before
+# the PostgreSQL config directory exists, causing a bootstrap crash-loop.
+# Masking blocks ALL start paths (including systemd Restart=on-failure).
+- name: Mask patroni service to prevent accidental starts during setup
+  ansible.builtin.systemd:
+    name: patroni
+    masked: true
+  failed_when: false
+  when: cluster_scaling is not defined or not cluster_scaling | bool
+  tags: patroni
+
 - name: Make sure handlers are flushed immediately
   ansible.builtin.meta: flush_handlers
 
@@ -857,6 +869,34 @@
   when: patroni_cluster_bootstrap_method != "initdb" and
     postgresql_conf_dir != postgresql_data_dir and
     (cluster_scaling is not defined or not cluster_scaling | bool)
+  tags: patroni
+
+# On re-deploy, a previous failed bootstrap may have left stale DCS state
+# (e.g. empty /service/<cluster>/initialize key) that prevents bootstrapping.
+- name: Remove stale patroni DCS state before bootstrap (if initdb)
+  become: true
+  become_user: postgres
+  ansible.builtin.expect:
+    command: "patronictl -c /etc/patroni/patroni.yml remove {{ patroni_cluster_name }}"
+    responses:
+      "Please confirm the cluster name to remove": "{{ patroni_cluster_name }}"
+      "You are about to remove all information in DCS": "Yes I am aware"
+  failed_when: false
+  changed_when: false
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/usr/bin:/usr/local/bin"
+  when:
+    - not postgresql_exists | default(false) | bool
+    - patroni_cluster_bootstrap_method == "initdb"
+    - inventory_hostname == groups['master'][0]
+  tags: patroni
+
+- name: Unmask patroni service (setup complete, ready to start)
+  ansible.builtin.systemd:
+    name: patroni
+    masked: false
+    daemon_reload: true
+  when: cluster_scaling is not defined or not cluster_scaling | bool
   tags: patroni
 
 - block: # start patroni on master
