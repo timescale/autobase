@@ -33,7 +33,7 @@ restapi:
 {% if patroni_restapi_password | default('') | length > 0 %}
   authentication:
     username: {{ patroni_restapi_username | default('patroni') }}
-    password: {{ patroni_restapi_password }}
+    password: "{{ patroni_restapi_password }}"
 {% else %}
 #  authentication:
 #    username: username
@@ -62,7 +62,7 @@ etcd3:
   username: {{ patroni_etcd_username | default('') }}
   {% endif %}
   {% if patroni_etcd_password | default('') | length > 0 %}
-  password: {{ patroni_etcd_password }}
+  password: "{{ patroni_etcd_password }}"
   {% endif %}
 {% endif %}
 
@@ -181,7 +181,7 @@ postgresql:
   authentication:
     replication:
       username: {{ patroni_replication_username }}
-      password: {{ patroni_replication_password }}
+      password: "{{ patroni_replication_password }}"
 {% for parameter in patroni_replication_auth_options %}
 {%   if parameter.option == 'sslrootcert' and parameter.value | length > 0 %}
       {{ parameter.option }}: {{ parameter.value }}
@@ -191,7 +191,7 @@ postgresql:
 {% endfor %}
     superuser:
       username: {{ patroni_superuser_username }}
-      password: {{ patroni_superuser_password }}
+      password: "{{ patroni_superuser_password }}"
 {% for parameter in patroni_superuser_auth_options %}
 {%   if parameter.option == 'sslrootcert' and parameter.value | length > 0 %}
       {{ parameter.option }}: {{ parameter.value }}
