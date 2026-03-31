@@ -1,12 +1,12 @@
 ---
-# Only daemon_reload here — the upstream handler used enabled=true and
-# state=reloaded which can undo systemctl mask and trigger premature
-# Patroni starts during setup. The explicit "Start patroni" task in
-# main.yml handles enabling and starting the service at the right time.
 - name: Reload patroni service
   ansible.builtin.systemd:
     daemon_reload: true
+    name: patroni
+    enabled: true
+    state: reloaded
   listen: "reload patroni"
+  when: postgresql_cluster_maintenance | default(false) | bool # exclude for initial deployment.
 
 - name: Reload postgres
   become: true
