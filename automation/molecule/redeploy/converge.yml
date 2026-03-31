@@ -1,6 +1,6 @@
 ---
 # Phase 1: Deploy a working PostgreSQL cluster
-- name: Converge | Setup
+- name: "Converge | [1/4] Deploy"
   hosts: all
   gather_facts: true
 
@@ -56,7 +56,7 @@
   ansible.builtin.import_playbook: ../../playbooks/deploy_pgcluster.yml
 
 # Phase 2: Verify the cluster is healthy before we break it
-- name: Converge | Verify initial deploy
+- name: "Converge | [2/4] Verify"
   hosts: all
   gather_facts: true
   tasks:
@@ -77,7 +77,7 @@
       delay: 10
 
 # Phase 3: Remove the cluster
-- name: Converge | Set remove variables
+- name: "Converge | [3/4] Remove"
   hosts: all
   gather_facts: false
   tasks:
@@ -92,7 +92,7 @@
 
 # Phase 4: Re-deploy with reduced pg_isready timeout so the test
 # fails fast (~1 min) instead of hanging for 8 hours.
-- name: Converge | Set reduced timeouts for re-deploy
+- name: "Converge | [4/4] Re-deploy"
   hosts: all
   gather_facts: false
   tasks:
